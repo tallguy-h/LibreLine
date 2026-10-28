@@ -1,0 +1,21 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder;
+
+option java_package = "com.daysofwonder.game.pb";
+option java_outer_classname = "PBGame";
+option optimize_for = SPEED;
+
+message Highscore {
+  optional string player_name = 1;
+  required int32 score = 2;
+  optional string variant = 3;
+}
+
+message Leaderboard {
+  optional string id = 1;
+  optional int32 nb_max_entries = 2 [default = 100];
+  repeated .com.daysofwonder.Highscore high_scores = 3;
+}
+

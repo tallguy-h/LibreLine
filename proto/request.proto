@@ -1,0 +1,349 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder.mm;
+
+import "game.proto";
+
+option java_package = "com.daysofwonder.game.pb";
+option java_outer_classname = "PBRequest";
+option optimize_for = SPEED;
+
+message Message {
+  optional int32 request_number = 1;
+  optional int32 id = 2;
+  extensions 100 to max;
+}
+
+message TableRequest {
+  enum Type {
+    CREATE = 0;
+    JOIN = 1;
+    RESURRECT = 2;
+    JOIN_OR_CREATE = 3;
+  }
+  message GameDetail {
+    optional string name = 1;
+    optional string pass = 2 [default = ""];
+    optional bool create = 3;
+    optional bool resurrect = 4;
+    optional bool unrated = 5;
+    optional bool lurkable = 6;
+    optional int32 bot_nb = 7;
+    optional int32 min_karma = 8;
+    optional bool join_or_create = 9;
+  }
+  required .com.daysofwonder.mm.TableRequest.Type type = 1;
+  optional string res_table_id = 2 [default = ""];
+  optional int32 table_id = 3;
+  optional int32 player_id = 4;
+  repeated .com.daysofwonder.Player players = 5;
+  optional .com.daysofwonder.mm.TableRequest.GameDetail game_details = 6;
+  optional .com.daysofwonder.GameData game_data = 7;
+  optional .com.daysofwonder.PlayerPreferences player_preferences = 8;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.TableRequest table_request = 101;
+  }
+}
+
+message ChatRequest {
+  optional int32 player_id = 1 [default = -1];
+  optional sint32 message = 2 [default = -1];
+  optional int32 whisper_id = 3 [default = -1];
+  optional string message_string = 4 [default = ""];
+  optional string name = 5 [default = ""];
+  optional string game = 6 [default = ""];
+  optional bool insanity = 7 [default = false];
+  optional bool blocked = 8 [default = false];
+  optional bool in_lobby = 9;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.ChatRequest chat_request = 105;
+  }
+}
+
+message AuthRequest {
+  required string name = 1;
+  required string pass = 2;
+  optional string nonce = 3;
+  optional string hmac = 4;
+  optional bool bot = 5;
+  optional string bot_name = 6;
+  optional string partnerId = 7;
+  optional string partnerUserId = 8;
+  optional string sessionToken = 9;
+  optional string user_agent = 10;
+  optional string full_user_agent = 11;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.AuthRequest auth_request = 100;
+  }
+}
+
+message DisconnectRequest {
+  required bool table_death = 1;
+  optional sint32 player_id = 2 [default = -1];
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.DisconnectRequest disconnect_request = 103;
+  }
+}
+
+message TableListRequest {
+  repeated .com.daysofwonder.Table tables = 1;
+  repeated .com.daysofwonder.Client clients = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.TableListRequest table_list_request = 104;
+  }
+}
+
+message ErrorRequest {
+  enum ErrorType {
+    ERROR_GENERAL = 0;
+    ACCESS_DENIED = 1;
+    TABLE_ERROR = 2;
+    BAD_KARMA = 3;
+    LURK_ERROR = 4;
+    SERVERFULL_ERROR = 10;
+    TABLE_CREATION_ERROR = 11;
+    MAINTENANCE_MODE = 12;
+  }
+  required .com.daysofwonder.mm.ErrorRequest.ErrorType error = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.ErrorRequest error_request = 204;
+  }
+}
+
+message LurkRequest {
+  required int32 table_id = 1;
+  optional sint32 player_id = 2 [default = -1];
+  repeated .com.daysofwonder.Player player = 3;
+  optional int32 current_player_id = 4;
+  optional .com.daysofwonder.GameData game_data = 5;
+  optional .com.daysofwonder.Player my_player = 6;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.LurkRequest lurk_request = 106;
+  }
+}
+
+message PlayerInfoRequest {
+  optional int32 player_id = 1 [default = -1];
+  optional bool ring = 2 [default = false];
+  optional .com.daysofwonder.Player player = 3;
+  optional string h1 = 4;
+  optional string h2 = 5;
+  repeated .com.daysofwonder.PlayerAchievement achievements = 6;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.PlayerInfoRequest player_info_request = 107;
+  }
+}
+
+message FindInfoRequest {
+  optional float frequency = 1;
+  optional string last_game_date = 2;
+  optional string next_scheduled_game = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.FindInfoRequest find_info_request = 108;
+  }
+}
+
+message StartGameRequest {
+  optional bool ready = 1 [default = true];
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.StartGameRequest start_game_request = 109;
+  }
+}
+
+message CompressedTableList {
+  repeated .com.daysofwonder.Table tables = 1;
+  repeated .com.daysofwonder.Client clients = 2;
+}
+
+message CompressedTableListRequest {
+  required bytes compressed = 1;
+  required int32 nb_tables = 2;
+  required bool open = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.CompressedTableListRequest compressed_table_list_request = 110;
+  }
+}
+
+message BuddyListRequest {
+  enum Action {
+    NONE = 0;
+    SUBSCRIBE = 1;
+    UNSUBSCRIBE = 2;
+    ADD = 3;
+    REMOVE = 4;
+  }
+  enum Kind {
+    Kind_BUDDY = 0;
+    Kind_IGNORE = 1;
+  }
+  optional .com.daysofwonder.mm.BuddyListRequest.Action action = 1;
+  optional sint32 buddy_id = 2;
+  optional .com.daysofwonder.BuddyList buddy_list = 3;
+  optional .com.daysofwonder.mm.BuddyListRequest.Kind list = 4;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.BuddyListRequest buddy_list_request = 111;
+  }
+}
+
+message YourTurnRequest {
+  required int32 player_id = 1;
+  extensions 11 to 19;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.YourTurnRequest your_turn_request = 200;
+  }
+}
+
+message OKRequest {
+  optional bool resumable_game = 1 [default = false];
+  optional bool can_create_table = 2 [default = false];
+  optional int32 protocol_version = 3 [default = 0];
+  optional .com.daysofwonder.Player player = 7;
+  optional int32 max_trial_games = 8;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.OKRequest ok_request = 201;
+  }
+}
+
+message EndMatchRequest {
+  optional .com.daysofwonder.GameOutcome outcome = 5;
+  optional int32 max_trial_games = 2;
+  optional string variant = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.EndMatchRequest end_match_request = 202;
+  }
+}
+
+message NewPlayerRequest {
+  optional .com.daysofwonder.Player player = 1;
+  optional string name = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.NewPlayerRequest new_player_request = 203;
+  }
+}
+
+message LeaveGameRequest {
+  optional bool table_death = 1 [default = false];
+  optional int32 player_id = 2 [default = -1];
+  optional bool kicked = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.LeaveGameRequest leave_game_request = 205;
+  }
+}
+
+message ChangeVisibilityRequest {
+  optional bool visible = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.ChangeVisibilityRequest change_visibility_request = 206;
+  }
+}
+
+message InitiateInvitationRequest {
+  optional int32 recipient = 1;
+  optional .com.daysofwonder.GameData game_data = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.InitiateInvitationRequest initiate_invitation_request = 207;
+  }
+}
+
+message InvitationRequest {
+  optional .com.daysofwonder.Invitation invitation_details = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.InvitationRequest invitation_request = 208;
+  }
+}
+
+message InvitationCancelledRequest {
+  optional .com.daysofwonder.Invitation invitation = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.InvitationCancelledRequest invitation_cancelled_request = 209;
+  }
+}
+
+message InvitationDeniedRequest {
+  optional .com.daysofwonder.Invitation invitation = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.InvitationDeniedRequest invitation_denied_request = 210;
+  }
+}
+
+message InvitationAcceptedRequest {
+  optional .com.daysofwonder.Invitation invitation = 1;
+  optional int32 table_id = 2;
+  optional string password = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.InvitationAcceptedRequest invitation_accepted_request = 211;
+  }
+}
+
+message RematchAcceptRequest {
+  optional .com.daysofwonder.RematchData data = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.RematchAcceptRequest rematch_accept_request = 212;
+  }
+}
+
+message RematchAcceptedRequest {
+  optional int32 table_id = 1;
+  optional string password = 2;
+  optional .com.daysofwonder.GameData game_data = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.RematchAcceptedRequest rematch_accepted_request = 213;
+  }
+}
+
+message RematchInvitationRequest {
+  optional .com.daysofwonder.Player player = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.RematchInvitationRequest rematch_invitation_request = 214;
+  }
+}
+
+message UserAgentRequest {
+  optional string user_agent = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.UserAgentRequest user_agent_request = 215;
+  }
+}
+
+message LobbyContentRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.LobbyContentRequest lobby_content_request = 216;
+  }
+}
+
+message HotswapTableRequest {
+  optional int32 table_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.HotswapTableRequest hotswap_table_request = 217;
+  }
+}
+
+message KickRequest {
+  optional int32 player_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.KickRequest kick_request = 218;
+  }
+}
+
+message RefreshRightsRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.RefreshRightsRequest refrech_rights_request = 219;
+  }
+}
+
+message PlayerInfoChangedRequest {
+  optional int32 player_id = 1;
+  optional string name = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.PlayerInfoChangedRequest player_info_changed_request = 220;
+  }
+}
+
+message PingRequest {
+  required int64 timestamp = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.mm.PingRequest ping_request = 777;
+  }
+}
+

@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\LibreLine.Players\LibreLine.Players.csproj" />
+    <ProjectReference Include="..\..\src\LibreLine.Storage.Json\LibreLine.Storage.Json.csproj" />
+  </ItemGroup>
+</Project>

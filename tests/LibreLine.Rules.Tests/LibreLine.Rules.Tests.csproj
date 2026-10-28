@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\LibreLine.Rules\LibreLine.Rules.csproj" />
+  </ItemGroup>
+</Project>

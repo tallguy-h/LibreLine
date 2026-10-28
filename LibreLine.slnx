@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Asmodee.Api/Asmodee.Api.csproj" />
+    <Project Path="src/LibreLine.Games/LibreLine.Games.csproj" />
+    <Project Path="src/LibreLine.Host/LibreLine.Host.csproj" />
+    <Project Path="src/LibreLine.Lobby/LibreLine.Lobby.csproj" />
+    <Project Path="src/LibreLine.Players/LibreLine.Players.csproj" />
+    <Project Path="src/LibreLine.Protocol/LibreLine.Protocol.csproj" />
+    <Project Path="src/LibreLine.Rules/LibreLine.Rules.csproj" />
+    <Project Path="src/LibreLine.Sessions/LibreLine.Sessions.csproj" />
+    <Project Path="src/LibreLine.Storage.Json/LibreLine.Storage.Json.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LibreLine.Host.Tests/LibreLine.Host.Tests.csproj" />
+    <Project Path="tests/LibreLine.Players.Tests/LibreLine.Players.Tests.csproj" />
+    <Project Path="tests/LibreLine.Protocol.Tests/LibreLine.Protocol.Tests.csproj" />
+    <Project Path="tests/LibreLine.Rules.Tests/LibreLine.Rules.Tests.csproj" />
+  </Folder>
+</Solution>

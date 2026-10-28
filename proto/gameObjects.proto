@@ -1,0 +1,67 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package pb;
+
+
+enum GameMode {
+  undefined = 0;
+  solo = 1;
+  pass_and_play = 2;
+  local = 3;
+  online = 4;
+  periodic_challenge = 5;
+  playlink = 6;
+}
+
+message GameOnDisk {
+  message PlayerInfo {
+    optional string name = 1;
+    optional int32 color_index = 2 [default = -1];
+    optional bool local_human = 3;
+    optional string uuid = 4;
+    optional int32 bot_type = 5;
+  }
+  message ExtraData {
+    optional string key = 1;
+    optional bytes value = 2;
+  }
+  optional .pb.GameMode game_mode = 1 [default = undefined];
+  optional bytes opaque_state = 2;
+  repeated .pb.GameOnDisk.PlayerInfo player_info = 3;
+  optional bytes opaque_local = 4;
+  optional bytes settings = 5;
+  optional bytes opaque_options = 6;
+  repeated .pb.GameOnDisk.ExtraData extra_data = 7;
+  optional bool game_over = 8;
+}
+
+message GameFilter {
+  enum Observers {
+    Nobody = 1;
+    Buddies = 2;
+    Everybody = 3;
+  }
+  message BotInfo {
+    optional int32 player_index = 1;
+    optional int32 bot_type_index = 2;
+  }
+  optional int32 nbr_players = 3;
+  optional int32 first_player = 4;
+  optional uint32 timeout = 5;
+  optional bool single_session = 6;
+  optional bool ranked = 7;
+  optional string private = 8;
+  optional int32 min_karma = 9;
+  repeated .pb.GameFilter.BotInfo bot_info = 10;
+  optional .pb.GameFilter.Observers observers = 11;
+  optional bool cards_observable = 12;
+  optional bytes opaque_settings = 13;
+  optional int32 min_rank_score = 14;
+}
+
+message LocalSummary {
+  optional int32 map_enum_index = 1;
+  optional int32 rules_engine_version = 2;
+}
+

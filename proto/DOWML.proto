@@ -1,0 +1,114 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder.dowml;
+
+option optimize_for = SPEED;
+
+enum DOWMLOrientation {
+  LEFT_TO_RIGHT = 1;
+  RIGHT_TO_LEFT = 2;
+  TOP_TO_BOTTOM = 3;
+  BOTTOM_TO_TOP = 4;
+}
+
+enum DOWMLAlignment {
+  ALIGN_NEAR = 1;
+  ALIGN_CENTER = 2;
+  ALIGN_FAR = 3;
+  ALIGN_FILL = 4;
+}
+
+message DOWMLColor {
+  optional float red = 1;
+  optional float blue = 2;
+  optional float green = 3;
+  optional float alpha = 4 [default = 1];
+}
+
+message DOWMLPosition {
+  optional float x = 1;
+  optional float y = 2;
+  optional bool relative = 3;
+}
+
+message DOWMLSize {
+  optional float width = 1;
+  optional float height = 2;
+  optional float relative_width = 3;
+  optional float relative_height = 4;
+}
+
+message DOWMLTextAttributes {
+  optional string font = 1;
+  optional float size = 2 [default = 12];
+  optional .com.daysofwonder.dowml.DOWMLAlignment alignment = 3 [default = ALIGN_NEAR];
+  optional .com.daysofwonder.dowml.DOWMLAlignment vertical_alignment = 4 [default = ALIGN_CENTER];
+  optional .com.daysofwonder.dowml.DOWMLColor color = 5;
+}
+
+message DOWMLText {
+  optional string lang = 1;
+  repeated string string = 2;
+  optional .com.daysofwonder.dowml.DOWMLTextAttributes text_attributes = 3;
+}
+
+message DOWMLImage {
+  optional string lang = 1;
+  optional string name = 2;
+}
+
+message DOWMLLayout {
+  optional string id = 1;
+  optional .com.daysofwonder.dowml.DOWMLOrientation orientation = 2 [default = TOP_TO_BOTTOM];
+  optional .com.daysofwonder.dowml.DOWMLAlignment secondary_alignment = 3 [default = ALIGN_CENTER];
+  optional float gap = 4;
+  optional .com.daysofwonder.dowml.DOWMLPosition position = 5;
+  optional .com.daysofwonder.dowml.DOWMLSize size = 6;
+  optional bool fit_content_width = 7 [default = true];
+  optional bool fit_content_height = 8 [default = true];
+  optional float left_margin = 9;
+  optional float bottom_margin = 10;
+  optional float right_margin = 11;
+  optional float top_margin = 12;
+  optional float weight = 13 [default = -1];
+  optional bool debugged = 100;
+}
+
+message DOWMLStyle {
+  optional .com.daysofwonder.dowml.DOWMLLayout layout = 1;
+  optional .com.daysofwonder.dowml.DOWMLTextAttributes text_attributes = 2;
+  optional .com.daysofwonder.dowml.DOWMLColor background_color = 3;
+}
+
+message DOWMLElement {
+  optional string id = 1;
+  optional string lang = 2;
+  optional .com.daysofwonder.dowml.DOWMLColor background_color = 3;
+  optional float scale_x = 4 [default = 1];
+  optional float scale_y = 5 [default = 1];
+  optional float scale = 6 [default = 1];
+  optional float rotation = 7;
+  repeated .com.daysofwonder.dowml.DOWMLElement element = 8;
+  optional .com.daysofwonder.dowml.DOWMLLayout layout = 9;
+  repeated .com.daysofwonder.dowml.DOWMLText text = 10;
+  repeated .com.daysofwonder.dowml.DOWMLImage image = 11;
+  optional .com.daysofwonder.dowml.DOWMLTextAttributes text_attributes = 12;
+}
+
+message DOWMLExtraProperties {
+  message Property {
+    optional string lang = 1;
+    optional string key = 2;
+    optional string value = 3;
+  }
+  repeated .com.daysofwonder.dowml.DOWMLExtraProperties.Property property = 1;
+}
+
+message DOWMLPage {
+  repeated .com.daysofwonder.dowml.DOWMLElement title = 1;
+  optional .com.daysofwonder.dowml.DOWMLStyle style = 2;
+  repeated .com.daysofwonder.dowml.DOWMLElement body = 3;
+  optional .com.daysofwonder.dowml.DOWMLExtraProperties extra_properties = 4;
+}
+

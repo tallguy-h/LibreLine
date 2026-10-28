@@ -1,0 +1,13 @@
+services:
+  libreline:
+    build: .
+    image: libreline
+    container_name: libreline
+    ports:
+      - "2445:2445"
+    volumes:
+      - libreline-data:/data
+    restart: unless-stopped
+
+volumes:
+  libreline-data:

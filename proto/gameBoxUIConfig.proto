@@ -1,0 +1,103 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package pb;
+
+
+enum Orientation {
+  LANDSCAPE = 1;
+  PORTRAIT = 2;
+}
+
+message CCPoint {
+  optional float x = 1;
+  optional float y = 2;
+}
+
+message RouteZOrderAdjustment {
+  enum Color {
+    RED = 1;
+    GREEN = 2;
+    BLUE = 3;
+    WHITE = 4;
+    BLACK = 5;
+    ORANGE = 6;
+    PURPLE = 7;
+    YELLOW = 8;
+    WILD = 9;
+  }
+  enum Direction {
+    ASCENDING = 1;
+    DESCENDING = 2;
+  }
+  message SlotZ {
+    optional int32 index = 1;
+    optional int32 z = 2;
+  }
+  optional string city_name_1 = 1;
+  optional string city_name_2 = 2;
+  optional .pb.RouteZOrderAdjustment.Color color = 3;
+  optional .pb.RouteZOrderAdjustment.Direction direction = 4;
+  optional int32 z_delta = 5 [default = 60];
+  repeated .pb.RouteZOrderAdjustment.SlotZ slot_z = 6;
+}
+
+message RouteZOrderAdjustments {
+  repeated .pb.RouteZOrderAdjustment route = 1;
+}
+
+message GameUIConfig {
+  optional string map_low_res = 1;
+  optional string map_low_res_for_portrait_map_in_landscape_screen = 2;
+  optional string map_high_res = 3;
+  optional string map_high_res_for_portrait_map_in_landscape_screen = 4;
+  optional string asset_prefix = 5;
+  optional string music_id = 6;
+  optional string route_detection_image_name = 7;
+  optional .pb.CCPoint card_pile_offset = 8;
+  optional string wagon_cards_prefix = 9;
+  repeated string ui_extension = 10;
+  optional string loco_card_color_name = 11;
+  optional .pb.Orientation map_orientation = 12 [default = LANDSCAPE];
+  optional .pb.Orientation ticket_orientation = 13 [default = LANDSCAPE];
+  optional string longest_route_bonus_card_name = 14;
+  optional bool should_stack_tickets_backwards = 15;
+  optional string game_screen_resource_file_suffix = 16;
+  optional float train_card_count_label_scale = 17 [default = 1];
+  optional string train_card_pile_controller_resource_name = 18;
+  optional string train_card_slot_controller_resource_name = 19;
+  optional string ticket_pile_controller_resource_name = 20;
+  optional .pb.CCPoint train_card_count_label_offset = 23;
+  optional float default_floating_scale_of_train_cards = 24;
+  optional string tickets_suffix = 25;
+  optional string tickets_suffix_for_portrait_map_in_landscape_screen = 26;
+  optional bool players_have_extra_info = 27;
+  optional string end_of_game_controller_resource_name_suffix = 28;
+  optional .pb.CCPoint train_card_natural_relative_hotspot = 29;
+  optional .pb.CCPoint train_card_natural_relative_hotspot_for_right_handed = 30;
+  optional .pb.CCPoint train_card_natural_relative_hotspot_for_left_handed = 31;
+  optional bool only_show_timer_for_current_player = 32;
+  optional .pb.CCPoint train_card_count_label_anchor_point = 33;
+  optional .pb.CCPoint train_card_count_label_relative_position = 34;
+  optional bool is_local_player_condensed = 35;
+  optional .pb.CCPoint train_card_scale = 36;
+  optional string globe_trotter_bonus_card_name = 37;
+  optional .pb.RouteZOrderAdjustments route_z_order_adjustments = 40;
+  optional string map_title_controller_resource_name = 41;
+  optional string wagon_green_file_name = 50;
+  optional string wagon_red_file_name = 51;
+  optional string wagon_yellow_file_name = 52;
+  optional string wagon_blue_file_name = 53;
+  optional string wagon_purple_file_name = 54;
+  optional float local_hand_resizer_height = 55;
+  optional string ticket_pile_controller_class_name = 56;
+  optional float wagon_scale = 57;
+  optional float city_scale = 58;
+  optional string map_for_tv = 59;
+  optional string map_for_tv_4k = 60;
+  optional string intro_sound_id = 61;
+  optional string not_my_turn_controller_resource_name_suffix = 62;
+  optional bool has_country_selection_with_glow_state = 64;
+  optional float game_participants_leave_button_scale = 65;
+}
+

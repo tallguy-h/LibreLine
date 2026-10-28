@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>LibreLine.Rules</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The map documents are the map data: embedded and parsed at start-up. -->
+    <EmbeddedResource Include="..\..\docs\maps\*.md" Exclude="..\..\docs\maps\README.md" LogicalName="maps/%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="LibreLine.Rules.Tests" />
+  </ItemGroup>
+
+</Project>

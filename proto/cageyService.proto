@@ -1,0 +1,189 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package pb;
+
+import "map.proto";
+
+
+message CageyConfig {
+  message CHData {
+    message TicketData {
+      optional int32 desirability = 1;
+    }
+    repeated .pb.CageyConfig.CHData.TicketData ticket_data = 1;
+  }
+  optional .pb.CageyConfig.CHData ch_data = 2;
+}
+
+message SortedTicketCouple {
+  message TwoTickets {
+    required int32 ticket1 = 1;
+    required int32 ticket2 = 2;
+  }
+  repeated .pb.SortedTicketCouple.TwoTickets two_ticket = 1;
+}
+
+message InitializeRequest {
+  optional string map_name = 1;
+  optional .pb.CageyConfig config = 2;
+  optional .pb.SortedTicketCouple sorted_ticket_couple = 3;
+  optional .com.daysofwonder.tt.TTPBMap map = 4;
+}
+
+message InitializeResponse {
+  enum APIVersion {
+    noVersion = 0;
+    version3 = 3;
+  }
+  required .pb.InitializeResponse.APIVersion version = 1 [default = noVersion];
+}
+
+message StockShare {
+  optional int32 number = 1;
+  optional int32 railroad_id = 2;
+}
+
+message StockTechno {
+  required int32 techno_id = 1;
+  required int32 available_quantity = 2;
+}
+
+message TrackPieceByRoute {
+  required int32 route_id = 1;
+  required int32 track_piece_id = 2;
+}
+
+message RequestState {
+  message Player {
+    message MyPlayer {
+      repeated int32 card_id = 2;
+      repeated int32 ticket_id = 3;
+      repeated .pb.StockShare stock_share = 4;
+      repeated int32 techno_id = 5;
+    }
+    required int32 player_id = 1;
+    required int32 nbr_cards = 2;
+    required int32 nbr_tickets = 3;
+    required int32 remaining_cars = 4;
+    repeated int32 route_id = 5;
+    optional .pb.RequestState.Player.MyPlayer my_player = 6;
+    optional int32 remaining_stations = 7;
+    repeated int32 station_city_id = 8;
+    optional int32 nbr_technos = 9;
+    optional bool picked_techno_this_turn = 10;
+  }
+  message Slot {
+    enum SlotId {
+      slotA = 0;
+      slotB = 1;
+      slotC = 2;
+      slotD = 3;
+      slotE = 4;
+      deckSlot = -1;
+    }
+    required .pb.RequestState.Slot.SlotId slot_id = 1;
+    required int32 card_id = 2;
+  }
+  repeated .pb.RequestState.Player player = 1;
+  optional int32 deck_size = 2;
+  repeated .pb.RequestState.Slot slot = 3;
+  optional int32 ticket_deck_size = 4;
+  repeated .pb.StockShare stock_market = 5;
+  optional int32 turn_index = 6;
+  repeated .pb.StockTechno stock_techno = 7;
+  repeated .pb.TrackPieceByRoute track_piece_by_route = 8;
+  repeated int32 available_track_piece_id = 9;
+}
+
+message StartTurnRequest {
+  required .pb.RequestState state = 1;
+  required bool last_turn = 2;
+}
+
+message StartTurnResponse {
+  message PickFirstCardResponse {
+    required .pb.RequestState.Slot.SlotId slot = 1;
+  }
+  message ClaimRouteResponse {
+    required int32 route_id = 1;
+    repeated int32 card_id = 2;
+  }
+  message AskForTicketsResponse {
+  }
+  message ClaimStationResponse {
+    required int32 city_id = 1;
+    repeated int32 card_id = 2;
+  }
+  message PickTechnology {
+    required int32 technology_id = 1;
+    repeated int32 card_id = 2;
+  }
+  optional .pb.StartTurnResponse.PickFirstCardResponse pick_card = 1;
+  optional .pb.StartTurnResponse.ClaimRouteResponse claim_route = 2;
+  optional .pb.StartTurnResponse.AskForTicketsResponse ask_for_tickets = 3;
+  optional .pb.StartTurnResponse.ClaimStationResponse claim_station = 4;
+  optional .pb.StartTurnResponse.PickTechnology pick_technology = 5;
+}
+
+message PickSecondCardRequest {
+  required .pb.RequestState state = 1;
+}
+
+message PickSecondCardResponse {
+  required .pb.RequestState.Slot.SlotId slot = 1;
+}
+
+message ChooseTicketsRequest {
+  required .pb.RequestState state = 1;
+  repeated int32 ticket_id = 2;
+  required int32 min_tickets = 3;
+}
+
+message ChooseTicketsResponse {
+  repeated int32 ticket_id = 1;
+}
+
+message BuyStockShareRequest {
+  optional .pb.RequestState state = 1;
+  optional bool for_dummy = 2;
+  optional int32 route_id = 3;
+  repeated int32 railroad_id = 4;
+}
+
+message BuyStockShareResponse {
+  optional int32 railroad_id = 1;
+}
+
+message ClaimSecondRouteRequest {
+  required .pb.RequestState state = 1;
+}
+
+message ClaimSecondRouteResponse {
+  message ClaimRouteResponse {
+    required int32 route_id = 1;
+    repeated int32 card_id = 2;
+  }
+  optional .pb.ClaimSecondRouteResponse.ClaimRouteResponse claim_route = 1;
+}
+
+message PutTrackPieceOnRouteRequest {
+  required .pb.RequestState state = 1;
+}
+
+message PutTrackPieceOnRouteResponse {
+  required int32 track_piece_id = 1;
+  required int32 route_id = 2;
+}
+
+message InsightResponse {
+  repeated int32 target_route = 1;
+}
+
+service RobotQuery {
+  rpc Initialize(.pb.InitializeResponse) returns (.pb.InitializeRequest);
+  rpc StartTurn(.pb.StartTurnRequest) returns (.pb.StartTurnResponse);
+  rpc PickSecondCard(.pb.PickSecondCardRequest) returns (.pb.PickSecondCardResponse);
+  rpc ChooseTickets(.pb.ChooseTicketsRequest) returns (.pb.ChooseTicketsResponse);
+  rpc BuyStockShare(.pb.BuyStockShareRequest) returns (.pb.BuyStockShareResponse);
+}

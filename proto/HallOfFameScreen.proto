@@ -1,0 +1,22 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package pb;
+
+import "gameObjects.proto";
+
+
+message HallOfFameScreenStartupParams {
+  enum Period {
+    UNDEFINED = 0;
+    EVER = 1;
+    WEEK = 2;
+    DAY = 3;
+  }
+  optional .pb.GameMode game_mode = 1;
+  optional string map_id = 2;
+  optional int32 nb_players = 3;
+  optional bool online = 4;
+  optional .pb.HallOfFameScreenStartupParams.Period period = 5 [default = UNDEFINED];
+}
+

@@ -1,0 +1,127 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder.game.push;
+
+import "game.proto";
+import "steam.proto";
+
+option java_package = "com.daysofwonder.game.push";
+option java_outer_classname = "PBPush";
+option optimize_for = SPEED;
+
+message Devices {
+  enum Type {
+    IOS = 1;
+    GCM = 2;
+    AMZN = 3;
+    IOS_SANDBOX = 4;
+    STEAM = 5;
+    IOS_US_POCKET = 6;
+    IOS_EU_POCKET = 7;
+    IOS_US_POCKET_SANDBOX = 8;
+    IOS_EU_POCKET_SANDBOX = 9;
+    OSX = 10;
+    OSX_SANDBOX = 11;
+    FCM = 12;
+  }
+  repeated .com.daysofwonder.game.push.Device device = 1;
+  optional .com.daysofwonder.game.push.Devices.Type type = 2;
+}
+
+message Device {
+  required bytes token = 1;
+}
+
+message DeviceType {
+  required bytes token = 1;
+  required .com.daysofwonder.game.push.Devices.Type type = 2;
+}
+
+message Notification {
+  optional string actionKey = 1;
+  optional string key = 2;
+  repeated string values = 3;
+  optional bytes payload = 4;
+}
+
+message PushToDevice {
+  optional string game = 1;
+  optional .com.daysofwonder.game.push.Devices devices = 2;
+  optional .com.daysofwonder.game.push.Notification notification = 3;
+  optional .com.daysofwonder.game.push.PushContext context = 4;
+}
+
+message Error {
+  optional string error = 1;
+}
+
+message RegisterPushObject {
+  optional string game = 1;
+  optional int64 object_id = 2;
+  optional .com.daysofwonder.game.push.PushContext context = 3;
+}
+
+message PushObjectRegistration {
+  optional .com.daysofwonder.game.push.PushRegistration registration = 1;
+}
+
+message UnregisterPushObject {
+  optional string game = 1;
+  optional .com.daysofwonder.game.push.PushRegistration registration = 2;
+}
+
+message PushObjectUnregistered {
+  optional .com.daysofwonder.game.push.PushRegistration registration = 1;
+}
+
+message EnablePushNotification {
+  optional string game = 1;
+  optional .com.daysofwonder.game.push.DeviceType device = 2;
+  extensions 100 to 120;
+}
+
+message PushRegistration {
+  extensions 100 to 120;
+}
+
+message PushContext {
+  extensions 100 to 199;
+}
+
+message SteamPushRegistration {
+  optional string session_id = 1;
+  extend .com.daysofwonder.game.push.PushRegistration {
+    optional .com.daysofwonder.game.push.SteamPushRegistration steam = 100;
+  }
+}
+
+message SteamPushContext {
+  optional .com.daysofwonder.game.push.SteamPushRegistration session_id = 1;
+  repeated .com.daysofwonder.Player players = 2;
+  optional int64 context = 3;
+  extend .com.daysofwonder.game.push.PushContext {
+    optional .com.daysofwonder.game.push.SteamPushContext steam = 100;
+  }
+}
+
+message TokenMessage {
+  required int32 request_id = 1;
+  extensions 100 to max;
+}
+
+message InvalidTokenMessage {
+  repeated .com.daysofwonder.game.push.DeviceType token = 1;
+  extend .com.daysofwonder.game.push.TokenMessage {
+    optional .com.daysofwonder.game.push.InvalidTokenMessage invalid_token_message = 100;
+  }
+}
+
+message TokenChangedMessage {
+  repeated .com.daysofwonder.game.push.DeviceType old = 1;
+  repeated .com.daysofwonder.game.push.DeviceType new = 2;
+  extend .com.daysofwonder.game.push.TokenMessage {
+    optional .com.daysofwonder.game.push.TokenChangedMessage token_changed_message = 101;
+  }
+}
+

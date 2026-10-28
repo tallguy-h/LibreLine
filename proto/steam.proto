@@ -1,0 +1,18 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder.async;
+
+import "game.proto";
+
+option java_package = "com.daysofwonder.game.async.pb";
+option java_outer_classname = "PBSteam";
+option optimize_for = SPEED;
+
+message SteamPlayer {
+  optional string steam_id = 1;
+  extend .com.daysofwonder.Player {
+    optional .com.daysofwonder.async.SteamPlayer steam = 100;
+  }
+}
+

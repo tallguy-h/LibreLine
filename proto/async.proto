@@ -1,0 +1,1104 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder.async;
+
+import "game.proto";
+import "request.proto";
+import "push.proto";
+import "common.proto";
+
+option java_package = "com.daysofwonder.game.async.pb";
+option java_outer_classname = "PBAsync";
+option optimize_for = SPEED;
+
+enum GameStatus {
+  IN_PROGRESS = 1;
+  OVER = 2;
+  NOT_STARTED = 3;
+  ABORTED = 4;
+  OUTCOME = 5;
+  PLAYER_TIMEOUT = 6;
+  ABORTING = 7;
+  WAITING_INVITATION = 8;
+  FIRST_USER_DATA_ROUND = 9;
+}
+
+enum ErrorCode {
+  NOT_YOUR_TURN = 1;
+  UNKNOWN_PLAYER = 2;
+  UNKNOWN_GAME = 3;
+  MAINTENANCE_MODE = 4;
+  TOO_MANY_OFFERS = 5;
+  UNKNOWN_DEVICE_TOKEN = 6;
+  YOU_FORFEITED = 7;
+  YOU_RAN_OUT_OF_TIME = 8;
+  YOU_LEFT = 9;
+  PLAYER_ALREADY_IN_LOBBY = 10;
+  NOT_YOUR_INVITATION = 11;
+  CURRENT_PLAYER_IS_BOT = 12;
+  INVITATION_DENIED = 13;
+  BAD_REQUEST = 14;
+  WRONG_STATE = 15;
+  DUPLICATE_SESSION = 16;
+  PLAYER_NOT_IN_LOBBY = 17;
+}
+
+message Session {
+  optional int64 id = 1;
+}
+
+message AutomatchGameData {
+  message Value {
+    optional int32 int_value = 1;
+    optional float float_value = 2;
+    optional string string_value = 3;
+  }
+  message Property {
+    optional string name = 1;
+    optional .com.daysofwonder.async.AutomatchGameData.Value value = 2;
+  }
+  message OnlineFeature {
+    optional string feature_name = 1;
+    optional bool mandatory = 2;
+  }
+  message Requirement {
+    enum Function {
+      NOT_EQUAL = 1;
+      EQUAL = 2;
+      GREATER_OR_EQUAL = 3;
+      LESS_OR_EQUAL = 4;
+      GREATER_THAN = 5;
+      LESS_THAN = 6;
+      CONTAINS = 7;
+      NOT_CONTAINS = 8;
+    }
+    enum Type {
+      INT = 1;
+      FLOAT = 2;
+      STRING = 3;
+    }
+    optional string name = 1;
+    optional .com.daysofwonder.async.AutomatchGameData.Value value = 2;
+    optional .com.daysofwonder.async.AutomatchGameData.Requirement.Function function = 3;
+    optional .com.daysofwonder.async.AutomatchGameData.Requirement.Type type = 4;
+  }
+  optional int32 players = 1;
+  optional int32 owner_id = 2;
+  repeated .com.daysofwonder.async.AutomatchGameData.OnlineFeature needed_features = 3 [deprecated = true];
+  repeated .com.daysofwonder.async.AutomatchGameData.Requirement requirements = 4;
+  repeated .com.daysofwonder.async.AutomatchGameData.Property properties = 5;
+}
+
+message StatusReport {
+  message PlayerClock {
+    optional int32 player_id = 1;
+    optional .com.daysofwonder.async.GameClock clock = 2;
+  }
+  optional int64 game_id = 1;
+  optional .com.daysofwonder.async.GameStatus status = 2;
+  optional bytes data = 3;
+  optional int32 turn_id = 4;
+  repeated int32 next_player_ids = 5;
+  repeated .com.daysofwonder.Player players = 6;
+  repeated .com.daysofwonder.PlayerRankingUpdate ranking_update = 7;
+  repeated .com.daysofwonder.PlayerAchievementUpdate achievements_awarded = 8;
+  optional int32 turn_timeout = 9 [deprecated = true];
+  optional int64 start_turn_time = 10 [deprecated = true];
+  optional int32 turn_index = 11;
+  repeated int32 forfeiters = 12;
+  repeated int32 timed_out_players = 13;
+  optional .com.daysofwonder.async.GameConfiguration configuration = 14;
+  repeated .com.daysofwonder.async.StatusReport.PlayerClock clock = 15;
+  optional int32 active_player = 16;
+  repeated int32 left_players = 17;
+  repeated .com.daysofwonder.async.PlayerPregameData user_data = 18;
+  optional .com.daysofwonder.async.InvitationDetails invitation = 19;
+  optional int64 game_created_at = 20;
+  repeated int32 player_user_data_updated = 21;
+  optional bytes summary_data = 22;
+  repeated int32 outcome_not_seen = 23;
+  repeated .com.daysofwonder.async.KarmaUpdate karma_update = 24;
+}
+
+message NotificationData {
+  optional string action_key = 1;
+  optional string localized_key = 2;
+  repeated string localized_arg = 3;
+  optional bytes payload = 4;
+}
+
+message AsyncBuddy {
+  optional int32 player_id = 1;
+}
+
+message AsyncBuddyList {
+  repeated .com.daysofwonder.async.AsyncBuddy buddy = 1;
+  repeated .com.daysofwonder.Player player = 2;
+  repeated int32 present = 3;
+}
+
+message AsyncIgnore {
+  optional int32 player_id = 1;
+}
+
+message AsyncIgnoreList {
+  repeated .com.daysofwonder.async.AsyncIgnore ignore = 1;
+  repeated .com.daysofwonder.Player player = 2;
+}
+
+message KarmaUpdate {
+  optional int32 player_id = 1;
+  optional int32 old_karma = 2;
+  optional int32 new_karma = 3;
+}
+
+message Packet {
+  optional int64 id = 1;
+  optional .com.daysofwonder.mm.Message payload = 3;
+}
+
+message AsyncAuthRequest {
+  message UserAgent {
+    optional string user_agent = 1;
+    optional string full_user_agent = 2;
+  }
+  optional string name = 1;
+  optional string pass = 2;
+  optional .com.daysofwonder.async.PartnerToken partner_token = 3;
+  optional .com.daysofwonder.async.AsyncAuthRequest.UserAgent user_agent = 4;
+  optional .com.daysofwonder.async.Session session = 5;
+  optional string game_type = 6 [default = "SW"];
+  optional .com.daysofwonder.game.push.DeviceType device = 7;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncAuthRequest async_auth_request = 400;
+  }
+}
+
+message AsyncUnlinkDeviceRequest {
+  optional .com.daysofwonder.game.push.DeviceType device = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncUnlinkDeviceRequest async_unlink_device_request = 412;
+  }
+}
+
+message AsyncDeviceUnlinkedRequest {
+  optional .com.daysofwonder.game.push.DeviceType device = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncDeviceUnlinkedRequest async_device_unlinked_request = 413;
+  }
+}
+
+message AsyncConnectedRequest {
+  optional .com.daysofwonder.async.Session session = 1;
+  optional .com.daysofwonder.Player player = 2;
+  repeated .com.daysofwonder.PlayerAchievement achievements = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncConnectedRequest async_connected_request = 406;
+  }
+}
+
+message AsyncConnectionErrorRequest {
+  enum ConnectionError {
+    UNKNOWN = 0;
+    ACCESS_DENIED = 1;
+    SERVERFULL_ERROR = 2;
+    MAINTENANCE_MODE = 3;
+    NEED_AUTHENTICATION = 4;
+    UNKNOWN_GAME_TYPE = 5;
+    SERVER_ERROR = 6;
+    BANNED = 7;
+  }
+  optional .com.daysofwonder.async.AsyncConnectionErrorRequest.ConnectionError code = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncConnectionErrorRequest async_connection_error_request = 407;
+  }
+}
+
+message AsyncDisconnectRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncDisconnectRequest async_disconnect_request = 401;
+  }
+}
+
+message EngageGameRequest {
+  optional .com.daysofwonder.async.AutomatchGameData match_data = 1;
+  optional int32 turn_timeout = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.EngageGameRequest engage_game_request = 402;
+  }
+}
+
+message GameEngagedRequest {
+  optional int32 match_completion_time = 1;
+  optional int64 offer_id = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameEngagedRequest game_engaged_request = 403;
+  }
+}
+
+message DisengageGameRequest {
+  optional int64 offer_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.DisengageGameRequest disengage_game_request = 410;
+  }
+}
+
+message GameDisengagedRequest {
+  optional int64 offer_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameDisengagedRequest game_disengaged_request = 411;
+  }
+}
+
+message GameCreatedRequest {
+  optional int64 game_id = 1 [deprecated = true];
+  repeated .com.daysofwonder.Player players = 2 [deprecated = true];
+  optional int32 local_player_id = 3;
+  optional int32 invited_by = 4;
+  optional .com.daysofwonder.async.AutomatchGameData automatch_data = 5 [deprecated = true];
+  repeated .com.daysofwonder.async.AutomatchGameData automatch_originals = 6 [deprecated = true];
+  optional .com.daysofwonder.async.GameDetails details = 7;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameCreatedRequest game_created_request = 404;
+  }
+}
+
+message EngageGameWithFriendsRequest {
+  repeated int32 friends = 1;
+  optional int32 turn_timeout = 2 [deprecated = true];
+  optional .com.daysofwonder.async.GameConfiguration configuration = 3;
+  optional bytes user_data = 4;
+  optional bytes initial_state = 5;
+  optional bytes initial_summary_data = 6;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.EngageGameWithFriendsRequest engage_game_with_friends_request = 405;
+  }
+}
+
+message PlayerJoinedRequest {
+  optional int64 game_id = 1;
+  optional .com.daysofwonder.Player player = 2;
+}
+
+message AskServerStatisticsRequest {
+  optional bool subscribe = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AskServerStatisticsRequest ask_server_statistics_request = 408;
+  }
+}
+
+message ServerStatisticsRequest {
+  optional int32 hosted_games = 1;
+  optional int32 players = 2;
+  optional int32 connected_players = 3;
+  optional int32 quickplay_connected_players = 4 [deprecated = true];
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ServerStatisticsRequest server_statistics_request = 409;
+  }
+}
+
+message EstimateGameEngagementDurationRequest {
+  optional .com.daysofwonder.async.AutomatchGameData match_data = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.EstimateGameEngagementDurationRequest estimate_game_engagement_duration_request = 414;
+  }
+}
+
+message GameEngagementDurationEstimationRequest {
+  optional int32 match_completion_time = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameEngagementDurationEstimationRequest game_engagement_duration_estimation_request = 415;
+  }
+}
+
+message ActionRequiredRequest {
+  optional int64 game_id = 1;
+  optional bytes state = 2;
+  repeated .com.daysofwonder.Player players = 3;
+  repeated int32 next_player_ids = 4;
+  optional int32 turn_timeout = 5 [deprecated = true];
+  optional int64 start_turn_time = 6 [deprecated = true];
+  optional int32 turn_index = 7;
+  optional int32 invited_by = 8;
+  optional .com.daysofwonder.game.push.PushContext context = 9;
+  optional bool different_player = 10;
+  optional .com.daysofwonder.async.GameClock player_clock = 11;
+  repeated .com.daysofwonder.async.PlayerPregameData user_data = 12;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ActionRequiredRequest action_required_request = 500;
+  }
+}
+
+message CommitActionRequest {
+  optional int64 game_id = 1;
+  optional int32 player_id = 2;
+  optional bytes next_state = 3;
+  repeated int32 next_player_ids = 4;
+  optional bytes next_summary_data = 5;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.CommitActionRequest commit_action_request = 501;
+  }
+}
+
+message ActionCommitedRequest {
+  optional int64 game_id = 1;
+  optional int32 turn_index = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ActionCommitedRequest action_commited_request = 523;
+  }
+}
+
+message MulticastDataRequest {
+  optional int64 game_id = 1;
+  optional bytes data = 2;
+  repeated int32 recipient_ids = 3;
+  optional bool present_players_only = 4;
+  optional .com.daysofwonder.async.NotificationData notification = 5;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.MulticastDataRequest multicast_data_request = 502;
+  }
+}
+
+message ClientDataRequest {
+  optional int64 game_id = 1;
+  optional bytes data = 2;
+  optional .com.daysofwonder.Player sender = 3;
+  optional bool present_players_only = 4;
+  optional .com.daysofwonder.async.NotificationData notification = 5;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ClientDataRequest client_data_request = 503;
+  }
+}
+
+message MulticastChatRequest {
+  optional int64 game_id = 1;
+  optional string text = 2;
+  repeated int32 recipient_ids = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.MulticastChatRequest multicast_chat_request = 524;
+  }
+}
+
+message ClientChatRequest {
+  optional int64 game_id = 1;
+  optional string text = 2;
+  optional .com.daysofwonder.Player sender = 3;
+  optional bool profanity = 4;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ClientChatRequest client_chat_request = 525;
+  }
+}
+
+message ClientChatBlockedRequest {
+  optional int64 game_id = 1;
+  optional string text = 2;
+  optional .com.daysofwonder.Player sender = 4;
+  optional bool muted = 5;
+  optional bool blocked = 6;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ClientChatBlockedRequest client_chat_blocked_request = 526;
+  }
+}
+
+message GetChatHistoryRequest {
+  optional int64 game_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GetChatHistoryRequest get_chat_history_request = 535;
+  }
+}
+
+message ChatHistoryEntry {
+  optional string from = 1;
+  optional string text = 2;
+  optional int32 player_id = 3;
+  optional int64 timestamp = 4;
+}
+
+message ClientChatHistoryRequest {
+  optional int64 game_id = 1;
+  repeated .com.daysofwonder.async.ChatHistoryEntry entry = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ClientChatHistoryRequest client_chat_history_request = 536;
+  }
+}
+
+message PlayerTimeoutRequest {
+  enum PlayerStatus {
+    TIMEOUT = 1;
+    FORFEIT = 2;
+    LEFT = 3;
+    ROBOT = 4;
+  }
+  optional int64 game_id = 1;
+  optional bytes state = 2;
+  optional int32 offender_id = 3;
+  repeated .com.daysofwonder.Player players = 4;
+  repeated int32 next_player_ids = 5;
+  optional .com.daysofwonder.async.PlayerTimeoutRequest.PlayerStatus status = 6;
+  optional int32 turn_index = 7;
+  optional .com.daysofwonder.game.push.PushContext context = 8;
+  optional .com.daysofwonder.async.GameStatus game_status = 9;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.PlayerTimeoutRequest player_timeout_request = 504;
+  }
+}
+
+message ErrorRequest {
+  optional int64 game_id = 1;
+  optional .com.daysofwonder.async.ErrorCode code = 2;
+  optional string msg = 3;
+  optional int32 turn_index = 4;
+  optional int32 player_id = 5;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ErrorRequest error_request = 505;
+  }
+}
+
+message PlayerPresenceUpdateRequest {
+  optional int64 game_id = 1;
+  repeated int32 present = 2;
+  repeated int32 absent = 3;
+  repeated int32 in_game = 4;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.PlayerPresenceUpdateRequest player_presence_update_request = 506;
+  }
+}
+
+message GameOverRequest {
+  optional int64 game_id = 1;
+  repeated double scores = 2 [deprecated = true];
+  optional bool lowerIsBetter = 3 [deprecated = true];
+  repeated .com.daysofwonder.PlayerAchievementUpdate achievements_awarded = 4;
+  optional bytes data = 5;
+  repeated .com.daysofwonder.FinalScore finalScores = 6;
+  optional bool is_ranked = 7 [default = false];
+  repeated string variants = 8;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameOverRequest game_over_request = 507;
+  }
+}
+
+message GameOutcomeRequest {
+  optional int64 game_id = 1;
+  repeated .com.daysofwonder.PlayerRankingUpdate ranking_update = 2;
+  repeated .com.daysofwonder.PlayerAchievementUpdate achievements_awarded = 3;
+  repeated .com.daysofwonder.async.KarmaUpdate karma_update = 5;
+  optional bytes data = 4;
+  optional .com.daysofwonder.game.push.PushContext context = 6;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameOutcomeRequest game_outcome_request = 508;
+  }
+}
+
+message GameOutcomeConfirmationRequest {
+  optional int64 game_id = 1;
+  optional int32 player_id = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameOutcomeConfirmationRequest game_outcome_confirmation_request = 522;
+  }
+}
+
+message GameAbortRequest {
+  optional int64 game_id = 1;
+  repeated int32 aborting_player_ids = 2;
+  optional bool is_ranked = 3 [default = false];
+  optional bytes data = 4;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameAbortRequest game_abort_request = 529;
+  }
+}
+
+message GameAbortedRequest {
+  optional int64 game_id = 1;
+  repeated int32 aborting_player_ids = 2;
+  repeated .com.daysofwonder.PlayerRankingUpdate ranking_update = 3;
+  repeated .com.daysofwonder.async.KarmaUpdate karma_update = 5;
+  optional bytes data = 4;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameAbortedRequest game_aborted_request = 530;
+  }
+}
+
+message GameAbortedConfirmationRequest {
+  optional int64 game_id = 1;
+  optional int32 player_id = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameAbortedConfirmationRequest game_aborted_confirmation_request = 531;
+  }
+}
+
+message GameForfeitRequest {
+  optional int64 game_id = 1;
+  optional bool abort = 2 [deprecated = true];
+  optional bytes next_state = 3 [deprecated = true];
+  repeated int32 next_player_ids = 4 [deprecated = true];
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameForfeitRequest game_forfeit_request = 513;
+  }
+}
+
+message GameForfeitedRequest {
+  optional int64 game_id = 1;
+  optional int32 player_id = 2;
+  optional bool aborted = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameForfeitedRequest game_forfeited_request = 514;
+  }
+}
+
+message WaitingMessagesRequest {
+  message GameMessages {
+    optional int64 game_id = 1;
+    repeated .com.daysofwonder.mm.Message messages = 2;
+  }
+  required bool DO_NOT_USE_DEPRECATED = 2;
+  repeated .com.daysofwonder.async.WaitingMessagesRequest.GameMessages messages = 1 [deprecated = true];
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.WaitingMessagesRequest waiting_messages_request = 510;
+  }
+}
+
+message WhatsNewPussycatRequest {
+  optional int64 game_id = 1;
+  optional bool summary_data_only = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.WhatsNewPussycatRequest whats_new_pussycat_request = 511;
+  }
+}
+
+message GameStatusReportRequest {
+  repeated .com.daysofwonder.async.StatusReport reports = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameStatusReportRequest game_status_report_request = 512;
+  }
+}
+
+message AsyncBuddyListRequest {
+  optional bool subscribe = 1 [deprecated = true];
+  repeated string webcard_filter = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncBuddyListRequest async_buddy_list_request = 515;
+  }
+}
+
+message AsyncBuddyListContentRequest {
+  optional bool subscribed = 1 [deprecated = true];
+  optional .com.daysofwonder.async.AsyncBuddyList buddies = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncBuddyListContentRequest async_buddy_list_content_request = 516;
+  }
+}
+
+message AsyncBuddyPresencePartialUpdateRequest {
+  repeated int32 present = 1;
+  repeated int32 absent = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncBuddyPresencePartialUpdateRequest async_buddy_presence_partial_update_request = 517;
+  }
+}
+
+message AsyncBuddyManagementRequest {
+  enum Operation {
+    ADD = 1;
+    REMOVE = 2;
+  }
+  optional .com.daysofwonder.async.AsyncBuddyManagementRequest.Operation operation = 1;
+  optional .com.daysofwonder.async.AsyncBuddy buddy = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncBuddyManagementRequest async_buddy_management_request = 518;
+  }
+}
+
+message AsyncBuddyAddedRequest {
+  optional .com.daysofwonder.Player added_buddy = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncBuddyAddedRequest async_buddy_added_request = 519;
+  }
+}
+
+message AsyncBuddyRemovedRequest {
+  optional .com.daysofwonder.async.AsyncBuddy removed_buddy = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncBuddyRemovedRequest async_buddy_removed_request = 520;
+  }
+}
+
+message SubscribePresenceServiceRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.SubscribePresenceServiceRequest subscribe_presence_service_request = 532;
+  }
+}
+
+message UnsubscribePresenceServiceRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.UnsubscribePresenceServiceRequest unsubscribe_presence_service_request = 533;
+  }
+}
+
+message RegisterPresenceRequest {
+  repeated int32 player_ids = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.RegisterPresenceRequest register_presence_request = 527;
+  }
+}
+
+message UnregisterPresenceRequest {
+  repeated int32 player_ids = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.UnregisterPresenceRequest unregister_presence_request = 528;
+  }
+}
+
+message SwitchedToGameRequest {
+  optional int64 game_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.SwitchedToGameRequest switched_to_game_request = 534;
+  }
+}
+
+message EnterLobbyRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.EnterLobbyRequest enter_lobby_request = 600;
+  }
+}
+
+message LobbyEnteredRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyEnteredRequest lobby_entered_request = 601;
+  }
+}
+
+message ExitLobbyRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ExitLobbyRequest exit_lobby_request = 602;
+  }
+}
+
+message LobbyExitedRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyExitedRequest lobby_exited_request = 603;
+  }
+}
+
+message LobbyPlayerListRequest {
+  message PlayerList {
+    repeated .com.daysofwonder.async.SmallPlayer players = 1;
+  }
+  optional bytes player_list = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyPlayerListRequest lobby_player_list_request = 604;
+  }
+}
+
+message AskPlayerInfoRequest {
+  optional int32 player_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AskPlayerInfoRequest ask_player_info_request = 605;
+  }
+}
+
+message LobbyPlayerInfoRequest {
+  optional .com.daysofwonder.Player player = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyPlayerInfoRequest lobby_player_info_request = 606;
+  }
+}
+
+message LobbyCreateGameRequest {
+  optional .com.daysofwonder.async.GameConfiguration configuration = 1;
+  optional string password = 2;
+  optional bytes data = 3 [deprecated = true];
+  optional bytes user_data = 4;
+  optional bytes initial_state = 5;
+  optional bytes initial_summary_data = 6;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyCreateGameRequest lobby_create_game_request = 607;
+  }
+}
+
+message LobbyGameCreatedRequest {
+  optional .com.daysofwonder.async.GameDetails game = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyGameCreatedRequest lobby_game_created_request = 608;
+  }
+}
+
+message LobbyGameListRequest {
+  optional bytes game_list = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyGameListRequest lobby_game_list_request = 609;
+  }
+}
+
+message GameList {
+  repeated .com.daysofwonder.async.GameDetails games = 1;
+}
+
+message LobbyJoinGameRequest {
+  optional int64 game_id = 1;
+  optional string password = 2;
+  optional bytes user_data = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyJoinGameRequest lobby_join_game_request = 610;
+  }
+}
+
+message LobbyNewPlayerRequest {
+  optional .com.daysofwonder.async.GameDetails game = 1;
+  optional int32 joining_player = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyNewPlayerRequest lobby_new_player_request = 611;
+  }
+}
+
+message LobbyJoinDeniedRequest {
+  enum JoinError {
+    SERVER_ERROR = 1;
+    NOT_ENOUGH_KARMA = 2;
+    TOO_MANY_GAMES = 3;
+    GAME_FULL = 4;
+    IGNORED = 5;
+    PASSWORD_MISMATCH = 6;
+    UNKNOWN_GAME = 7;
+    PLAYER_DUPLICATE = 8;
+    ACCESS_DENIED = 9;
+    NOT_ENOUGH_RANKSCORE = 10;
+    NOT_ENOUGH_RANKED_GAMES_PLAYED = 11;
+  }
+  optional int64 game_id = 1;
+  optional .com.daysofwonder.async.LobbyJoinDeniedRequest.JoinError cause = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyJoinDeniedRequest lobby_join_denied_request = 612;
+  }
+}
+
+message LobbyLeaveGameRequest {
+  optional int64 game_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyLeaveGameRequest lobby_leave_game_request = 613;
+  }
+}
+
+message LobbyPlayerLeftGameRequest {
+  optional .com.daysofwonder.async.GameDetails game = 1;
+  optional .com.daysofwonder.Player leaving_player = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LobbyPlayerLeftGameRequest lobby_player_left_game_request = 614;
+  }
+}
+
+message PlayerReplacedRequest {
+  optional int64 game_id = 1;
+  optional int32 player_id = 2;
+  optional bool become_robot = 3;
+  optional .com.daysofwonder.async.PlayerTimeoutRequest.PlayerStatus status = 4;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.PlayerReplacedRequest player_replaced_request = 537;
+  }
+}
+
+message LeaveSyncGameRequest {
+  optional int64 game_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.LeaveSyncGameRequest leave_sync_game_request = 538;
+  }
+}
+
+message ResumeSyncGameRequest {
+  optional int64 game_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ResumeSyncGameRequest resume_sync_game_request = 539;
+  }
+}
+
+message AnswerInvitationRequest {
+  optional int64 game_id = 1;
+  optional bool accept = 2;
+  optional bytes user_data = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AnswerInvitationRequest answer_invitation_request = 540;
+  }
+}
+
+message InvitationAnsweredRequest {
+  optional int64 game_id = 1;
+  optional bool accept = 2;
+  optional .com.daysofwonder.Player invitee = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.InvitationAnsweredRequest invitation_answered_request = 541;
+  }
+}
+
+message PauseClockRequest {
+  optional int64 game_id = 1;
+  optional bool need_game_clocks = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.PauseClockRequest pause_clock_request = 542;
+  }
+}
+
+message ClockPausedRequest {
+  optional int64 game_id = 1;
+  repeated .com.daysofwonder.async.StatusReport.PlayerClock clock = 2;
+  optional .com.daysofwonder.async.ErrorCode error = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ClockPausedRequest clock_paused_request = 543;
+  }
+}
+
+message ResumeClockRequest {
+  optional int64 game_id = 1;
+  optional bool need_game_clocks = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ResumeClockRequest resume_clock_request = 544;
+  }
+}
+
+message ClockResumedRequest {
+  optional int64 game_id = 1;
+  repeated .com.daysofwonder.async.StatusReport.PlayerClock clock = 2;
+  optional .com.daysofwonder.async.ErrorCode error = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ClockResumedRequest clock_resumed_request = 545;
+  }
+}
+
+message GetClocksRequest {
+  optional int64 game_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GetClocksRequest get_clocks_request = 546;
+  }
+}
+
+message ClocksStatusRequest {
+  optional int64 game_id = 1;
+  repeated .com.daysofwonder.async.StatusReport.PlayerClock clock = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ClocksStatusRequest clocks_status_request = 547;
+  }
+}
+
+message AsyncIgnoreListRequest {
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncIgnoreListRequest async_ignore_list_request = 560;
+  }
+}
+
+message AsyncIgnoreListContentRequest {
+  optional .com.daysofwonder.async.AsyncIgnoreList ignores = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncIgnoreListContentRequest async_ignore_list_content_request = 561;
+  }
+}
+
+message AsyncIgnoreManagementRequest {
+  enum Operation {
+    ADD = 1;
+    REMOVE = 2;
+  }
+  optional .com.daysofwonder.async.AsyncIgnoreManagementRequest.Operation operation = 1;
+  optional .com.daysofwonder.async.AsyncIgnore ignore = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncIgnoreManagementRequest async_ignore_management_request = 562;
+  }
+}
+
+message AsyncIgnoreAddedRequest {
+  optional .com.daysofwonder.Player added_ignore = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncIgnoreAddedRequest async_ignore_added_request = 563;
+  }
+}
+
+message AsyncIgnoreRemovedRequest {
+  optional .com.daysofwonder.async.AsyncIgnore removed_ignore = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AsyncIgnoreRemovedRequest async_ignore_removed_request = 564;
+  }
+}
+
+message UserDataUpdateRequiredRequest {
+  optional int64 game_id = 1;
+  optional .com.daysofwonder.game.push.PushContext context = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.UserDataUpdateRequiredRequest user_update_data_required_request = 565;
+  }
+}
+
+message UpdateUserDataRequest {
+  optional int64 game_id = 1;
+  optional bytes user_data = 2;
+  optional int32 player_id = 3;
+  optional bool expect_more_data = 4;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.UpdateUserDataRequest update_user_data_request = 566;
+  }
+}
+
+message UserDataUpdatedRequest {
+  optional int64 game_id = 1;
+  optional bytes user_data = 2;
+  optional int32 player_id = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.UserDataUpdatedRequest user_data_updated_request = 567;
+  }
+}
+
+message SubscribeToObservableGameListRequest {
+  optional bool subscribe = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.SubscribeToObservableGameListRequest subscribe_to_observable_game_list_request = 620;
+  }
+}
+
+message SubscribedToObservableGameListRequest {
+  optional bool subscribed = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.SubscribedToObservableGameListRequest subscribed_to_observable_game_list_request = 621;
+  }
+}
+
+message ObservableGameListRequest {
+  optional bytes game_list = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.ObservableGameListRequest observable_game_list_request = 622;
+  }
+}
+
+message AskAnyPlayerInfoRequest {
+  optional int32 player_id = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.AskAnyPlayerInfoRequest ask_any_player_info_request = 630;
+  }
+}
+
+message PlayerInfoRequest {
+  optional .com.daysofwonder.Player player = 1;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.PlayerInfoRequest player_info_request = 631;
+  }
+}
+
+message StartObserveGameRequest {
+  optional int64 game_id = 1;
+  optional int32 observer = 2;
+  optional int64 observer_session = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.StartObserveGameRequest start_observe_game_request = 650;
+  }
+}
+
+message StopObserveGameRequest {
+  optional int64 game_id = 1;
+  optional int64 session = 2;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.StopObserveGameRequest stop_observe_game_request = 651;
+  }
+}
+
+message GameObservedRequest {
+  enum Status {
+    OK = 1;
+    IN_GAME_ERROR = 2;
+    NO_SUCH_GAME_ERROR = 3;
+    FORBIDDEN_ERROR = 4;
+    GAME_NOT_STARTED = 5;
+    GAME_OVER = 6;
+    NOT_IN_LOBBY = 7;
+  }
+  optional int64 game_id = 1;
+  optional .com.daysofwonder.async.GameObservedRequest.Status status = 2;
+  optional .com.daysofwonder.async.StatusReport game_status = 3;
+  extend .com.daysofwonder.mm.Message {
+    optional .com.daysofwonder.async.GameObservedRequest game_observed_request = 652;
+  }
+}
+
+message GameNotification {
+  enum Event {
+    YOUR_TURN = 1;
+    GAME_OVER = 2;
+    YOUR_TURN_INVITE = 3;
+    YOUR_TURN_ROBOT = 4;
+    CONFIRM_INVITATION = 5;
+  }
+  optional int64 game_id = 1;
+  optional .com.daysofwonder.async.GameNotification.Event event = 2;
+  optional int32 turn_index = 3;
+  optional int32 recipientDowId = 4;
+}
+
+message SmallPlayer {
+  optional int32 w_w_w_id = 1;
+  optional string name = 2;
+  optional int32 karma = 3;
+  optional double rank_score = 4;
+  optional int32 rank = 5;
+  optional int32 nb_games = 6;
+  optional int32 language = 7;
+  optional .com.daysofwonder.PartnerUser partner_user = 8;
+}
+
+message GameDetails {
+  optional int64 game_id = 1;
+  repeated .com.daysofwonder.Player players = 2;
+  optional .com.daysofwonder.async.GameConfiguration configuration = 3;
+  optional bytes data = 4 [deprecated = true];
+  repeated .com.daysofwonder.async.PlayerPregameData user_data = 5;
+}
+
+message GameConfiguration {
+  enum GameMode {
+    SYNCHRONOUS = 1;
+    ASYNCHRONOUS = 2;
+  }
+  enum Observers {
+    ALL = 1;
+    BUDDIES = 2;
+    TOURNAMENT = 3;
+  }
+  optional string name = 1;
+  optional bool private = 2;
+  optional bool lurkable = 3;
+  optional bool rated = 4;
+  optional int32 min_players = 5;
+  optional int32 max_players = 6;
+  optional int32 min_karma = 7;
+  optional int32 first_player = 8;
+  optional .com.daysofwonder.async.GameConfiguration.GameMode game_mode = 9;
+  optional int32 timeout = 10;
+  optional bytes data = 11;
+  optional bool require_first_user_data_round = 12;
+  optional .com.daysofwonder.async.GameConfiguration.Observers observable_by = 13;
+  optional int32 min_rankscore = 14;
+  optional string main_variant = 15;
+  repeated string extra_ranking_variants = 16;
+  optional int32 rules_engine_version = 17;
+}
+
+message GameClock {
+  optional int64 started_at = 1;
+  optional int64 last_started_at = 2;
+  optional int64 remaining = 3;
+  optional int64 duration = 4;
+  optional bool armed = 5;
+  optional int64 timestamp = 6;
+  optional bool paused = 7;
+}
+
+message InvitationDetails {
+  message Confirmation {
+    optional int32 player_id = 1;
+    optional bool accepted = 2;
+  }
+  optional int32 invited_by = 1;
+  repeated .com.daysofwonder.async.InvitationDetails.Confirmation confirmation = 2;
+  optional int64 timeout = 3;
+}
+
+message PlayerPregameData {
+  optional int32 player_id = 1;
+  optional bytes data = 2;
+}
+

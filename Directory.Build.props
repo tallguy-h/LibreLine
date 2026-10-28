@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <!-- Override with -p:LibreLineTargetFramework=... to build with an older SDK. -->
+    <LibreLineTargetFramework Condition="'$(LibreLineTargetFramework)' == ''">net10.0</LibreLineTargetFramework>
+    <TargetFramework>$(LibreLineTargetFramework)</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <Authors>Libre Line contributors</Authors>
+    <PackageLicenseExpression>GPL-2.0-only</PackageLicenseExpression>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,231 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package pb;
+
+import "cageyService.proto";
+
+
+message MapInfo {
+  message City {
+    required int32 city_id = 1;
+    required string name = 2;
+    required bool country = 3;
+    optional string land = 4;
+    optional string display_name = 5;
+  }
+  message TrackPiece {
+    enum Color {
+      PURPLE = 1;
+      WHITE = 2;
+      BLUE = 3;
+      YELLOW = 4;
+      ORANGE = 5;
+      BLACK = 6;
+      RED = 7;
+      GREEN = 8;
+    }
+    required int32 trackPiece_id = 1;
+    required .pb.MapInfo.TrackPiece.Color color = 2;
+    required int32 nbr_trains = 3;
+  }
+  message Route {
+    enum Color {
+      PURPLE = 1;
+      WHITE = 2;
+      BLUE = 3;
+      YELLOW = 4;
+      ORANGE = 5;
+      BLACK = 6;
+      RED = 7;
+      GREEN = 8;
+      WILD = 9;
+      TRACK_BED = 10;
+    }
+    required int32 route_id = 1;
+    required int32 city1_id = 2;
+    required int32 city2_id = 3;
+    required .pb.MapInfo.Route.Color color = 4;
+    required int32 nbr_trains = 5;
+    repeated int32 other_route_id = 6;
+    optional bool tunnel = 7;
+    optional int32 nbr_ferries = 8;
+    optional int32 nbr_mountain = 9;
+    optional bool ignore_other_route = 10;
+    repeated int32 forbidden_route_id = 11;
+  }
+  message Ticket {
+    message Destination {
+      required int32 city_id = 1;
+      required int32 score = 2;
+    }
+    required int32 ticket_id = 1;
+    required int32 city1_id = 2;
+    repeated .pb.MapInfo.Ticket.Destination destination = 3;
+    optional bool is_long = 4;
+  }
+  message Card {
+    enum Color {
+      PURPLE = 1;
+      WHITE = 2;
+      BLUE = 3;
+      YELLOW = 4;
+      ORANGE = 5;
+      BLACK = 6;
+      RED = 7;
+      GREEN = 8;
+      LOCO = 9;
+    }
+    required int32 card_id = 1;
+    required .pb.MapInfo.Card.Color color = 2;
+  }
+  message BonusTicket {
+    enum Bonus {
+      LONGEST = 1;
+      ASIAN_EXPLORER = 2;
+    }
+    required .pb.MapInfo.BonusTicket.Bonus bonus = 1;
+    optional int32 score = 2 [default = 10];
+  }
+  repeated .pb.MapInfo.City city = 1;
+  repeated .pb.MapInfo.Route route = 2;
+  repeated .pb.MapInfo.Ticket ticket = 3;
+  repeated .pb.MapInfo.Card card = 4;
+  required int32 min_nbr_players_for_double_routes = 5;
+  repeated .pb.MapInfo.BonusTicket bonus_ticket = 6;
+  required int32 ticketminstart = 7;
+  required int32 ticketmin = 8;
+  required bool loco_only_for_tunnels = 9;
+  repeated .pb.MapInfo.TrackPiece trackpiece = 10;
+  required int32 maxplayers = 11;
+}
+
+message CardDrop {
+  required .pb.MapInfo.Card.Color color = 1;
+  required int32 nbr_color = 2;
+  required int32 nbr_loco = 3;
+}
+
+message Partition {
+  repeated .pb.CardDrop card_drop = 1;
+}
+
+message Partitions {
+  repeated .pb.Partition partition = 1;
+}
+
+message SolutionEvaluation {
+  required int32 nbr_segments = 1;
+  required int32 longest_route = 2;
+  required int32 score = 3;
+  required bool is_connex = 4;
+}
+
+message TicketPrecomputedInfo {
+  message TicketSetEvaluation {
+    repeated int32 ticket_id = 1;
+    required int32 total_score = 2;
+    required .pb.SolutionEvaluation best_solution = 3;
+  }
+  repeated .pb.TicketPrecomputedInfo.TicketSetEvaluation evaluation = 1;
+}
+
+message Event {
+  enum Type {
+    CLAIM_ROUTE = 1;
+    CLAIM_STATION = 2;
+    ASK_FOR_TICKETS = 3;
+    PICK_OPEN_TRAIN_CARD = 4;
+    PICK_DECK_TRAIN_CARD = 5;
+    RETURN_TICKETS_PUBLIC = 6;
+    RETURN_TICKETS_PRIVATE = 7;
+    SHUFFLE_TRAIN_DECK = 8;
+    RECEIVE_TRAIN_CARD_PUBLIC = 9;
+    RECEIVE_TRAIN_CARD_PRIVATE = 10;
+    RECEIVE_TICKET_CARD_PUBLIC = 11;
+    RECEIVE_TICKET_CARD_PRIVATE = 12;
+    VISIBLE_TRAIN_CARD_REPLACED = 13;
+    DIG_TUNNEL = 14;
+    CHOOSE_FIRST_TICKETS_PRIVATE = 15;
+    BUY_STOCK_SHARE = 16;
+    ASK_FOR_FIRST_TICKETS = 17;
+    PICK_TECHNOLOGY = 18;
+    REMOVE_SINGLE_USE_TECHNOLOGIES = 19;
+    PUT_TRACK_PIECE_ON_ROUTE = 20;
+    PASS_TURN_WITHOUT_PUTTING_TRACK_PIECE_ON_ROUTE = 21;
+    RECEIVE_COUNTRIES_BONUSES = 22;
+  }
+  required .pb.Event.Type type = 1;
+  optional int32 player = 2;
+  optional int32 route = 3;
+  optional int32 city = 4;
+  repeated int32 card = 5;
+  optional int32 slot = 6;
+  optional int32 quantity = 7;
+  repeated int32 ticket = 8;
+  optional int32 railroad = 9;
+  optional bool for_dummy = 10;
+  optional int32 nbr_short = 11;
+  optional int32 nbr_long = 12;
+  optional int32 technology = 13;
+  optional int32 track_piece = 14;
+}
+
+message Settings {
+  message PlayerInfo {
+    optional int32 enumIndex = 1;
+    optional int32 botEnumValue = 3;
+  }
+  message Hacks {
+    optional int32 small_deck = 1;
+    optional int32 nbr_wagons = 2;
+  }
+  optional int32 seed = 1;
+  optional int32 map_enum_index = 2;
+  optional int32 nbr_players = 3;
+  optional int32 first_player = 4;
+  repeated .pb.Settings.PlayerInfo player_info = 5;
+  optional .pb.Settings.Hacks hacks = 6;
+  optional int64 match_id = 7;
+  optional int32 rulesEngineVersion = 8 [default = 0];
+}
+
+message T2RCommit {
+  message Hash {
+    optional uint32 public = 1;
+    repeated uint32 player_hand = 2;
+    optional uint32 train_deck = 3;
+    optional uint32 ticket_deck = 4;
+  }
+  message PlayerState {
+    required int32 player_id = 1;
+    optional .pb.Event choose_first_tickets = 2;
+    optional .pb.Event ask_for_first_tickets = 3;
+  }
+  required .pb.Settings settings = 1;
+  repeated .pb.Event action = 2;
+  optional .pb.T2RCommit.Hash hash = 3;
+  optional int32 next_player = 4;
+  repeated .pb.T2RCommit.PlayerState player_state = 6;
+  optional bool game_over = 7;
+}
+
+message T2RSummary {
+  message SummaryPlayerInfo {
+    repeated int32 nbr_wagons = 1;
+  }
+  optional .pb.T2RSummary.SummaryPlayerInfo summary_player_info = 1;
+}
+
+message T2RMulticast {
+  optional int32 action_index = 1;
+  optional int32 player = 2;
+  optional .pb.T2RCommit.Hash current_hash = 3;
+  optional .pb.Event action = 4;
+}
+
+message T2RPlayerState {
+  optional .pb.Event choose_first_tickets = 1;
+  optional .pb.Event ask_for_first_tickets = 2;
+}
+

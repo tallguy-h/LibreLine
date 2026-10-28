@@ -1,0 +1,203 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder;
+
+option java_package = "com.daysofwonder.game.pb";
+option java_outer_classname = "PBGame";
+option optimize_for = SPEED;
+
+message PartnerUser {
+  optional string partner_id = 1;
+  optional string partner_display_name = 2;
+  optional string partner_user_id = 3;
+}
+
+message Player {
+  required string name = 1;
+  required int32 id = 2;
+  optional int32 score = 3;
+  optional bool hot_swapped = 4;
+  optional int32 karma = 5;
+  optional double rank_score = 7;
+  optional bool is_bot = 8;
+  required int32 w_w_w_id = 9;
+  optional int32 rank = 10;
+  optional int32 nb_games = 11;
+  optional bool banned = 12;
+  optional bool blocked = 13;
+  optional .com.daysofwonder.Avatar avatar = 14;
+  optional int32 language = 15;
+  optional string tz = 16;
+  repeated .com.daysofwonder.Rank ranks = 17;
+  optional .com.daysofwonder.AccessRights rights = 18;
+  optional bool resumable = 19;
+  optional bool is_active = 20;
+  optional .com.daysofwonder.PartnerUser partner_user = 22;
+  extensions 100 to 199;
+}
+
+message GameData {
+  optional .com.daysofwonder.GameOutcome last_game_outcome = 1;
+  extensions 100 to 199;
+}
+
+message PlayerPreferences {
+  extensions 100 to 199;
+}
+
+message Table {
+  required int32 id = 1;
+  required bool private = 2;
+  required string name = 3;
+  repeated .com.daysofwonder.Player players = 4;
+  required int32 max_score = 5;
+  required bool accept_players = 6;
+  required bool lurkable = 7;
+  required bool rated = 8;
+  required int32 max_players = 9;
+  required int32 min_karma = 10;
+  optional .com.daysofwonder.GameData game_data = 11;
+  optional bool for_newbies = 12;
+}
+
+message Client {
+  required int32 id = 1;
+  optional .com.daysofwonder.Player player = 2;
+  optional bool is_lurking = 3;
+  extensions 100 to 199;
+}
+
+message Buddy {
+  required int32 id = 1;
+  required int32 buddy_id = 2;
+  optional int64 last_activity = 3;
+  optional int32 status = 4;
+  optional string other = 5;
+  optional string login = 6;
+}
+
+message BuddyList {
+  repeated .com.daysofwonder.Buddy buddy = 1;
+}
+
+message Avatar {
+  optional int32 id = 1;
+  optional string location = 2;
+  optional string image = 3;
+}
+
+message Rank {
+  optional int32 rank = 1 [default = 1];
+  optional float rank_score = 2 [default = 1500];
+  optional string name = 3;
+  optional int32 nb_games = 4 [default = 0];
+}
+
+message PlayerRankingUpdate {
+  required int32 player_id = 1;
+  optional float delta = 2;
+  optional double old_rank_score = 3;
+  optional double new_rank_score = 4;
+  optional string variant = 5;
+  optional int32 old_nb_games = 6;
+  optional int32 new_nb_games = 7;
+}
+
+message RankingUpdate {
+  repeated .com.daysofwonder.PlayerRankingUpdate update = 1;
+}
+
+message FinalScore {
+  optional int32 player_id = 1;
+  optional int32 game_rank = 2;
+  optional bool winner = 3;
+  optional float game_score = 4;
+  optional int32 nb_games = 5;
+}
+
+message GameRankingInfo {
+  enum RankingUpdateCondition {
+    NO_FORFEITER = 0;
+    ALWAYS = 1;
+  }
+  optional string game_id = 1;
+  optional string variant = 2;
+  optional bool rated = 3 [default = false];
+  optional .com.daysofwonder.GameRankingInfo.RankingUpdateCondition condition = 4 [default = NO_FORFEITER];
+  repeated .com.daysofwonder.FinalScore final_score = 5;
+  repeated int32 forfeiter = 6;
+}
+
+message GameOutcome {
+  optional .com.daysofwonder.RankingUpdate ranking_update = 1;
+  optional .com.daysofwonder.GameOutcome last_match_outcome = 2;
+  repeated .com.daysofwonder.Player player = 3;
+  repeated int32 winner = 4;
+  extensions 100 to 199;
+}
+
+message PlayerAchievement {
+  required .com.daysofwonder.Achievement achievement = 1;
+  optional string date = 2;
+  optional string game = 3;
+  optional string opponent = 4;
+}
+
+message Achievement {
+  enum Status {
+    NEW = 0;
+    ACTIVE = 1;
+    RETIRED = 2;
+  }
+  enum Type {
+    NORMAL = 0;
+    OFFICER = 1;
+    EVENT = 3;
+    COMMUNITY = 4;
+  }
+  enum Unicity {
+    ALL = 0;
+    FIRST = 1;
+    FLOAT = 2;
+  }
+  required int32 id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional .com.daysofwonder.Achievement.Type type = 4;
+  optional .com.daysofwonder.Achievement.Unicity unicity = 5 [default = ALL];
+  optional .com.daysofwonder.Achievement.Status status = 6;
+  optional bool secret = 7;
+  optional int32 war_treasure = 8;
+  optional string tag = 9;
+  optional int32 category = 10;
+}
+
+message PlayerAchievementUpdate {
+  optional int32 player_id = 1;
+  repeated .com.daysofwonder.PlayerAchievement achievements = 2;
+}
+
+message AchievementUpdate {
+  repeated .com.daysofwonder.PlayerAchievementUpdate achievement_updates = 1;
+}
+
+message AccessRights {
+  message Right {
+    optional string name = 1;
+    optional string feature = 2;
+  }
+  repeated .com.daysofwonder.AccessRights.Right rights = 1;
+  extensions 100 to 199;
+}
+
+message Invitation {
+  optional .com.daysofwonder.Player sender = 1;
+  optional .com.daysofwonder.Player receiver = 2;
+  optional .com.daysofwonder.GameData game_data = 3;
+}
+
+message RematchData {
+  extensions 100 to 199;
+}
+

@@ -1,0 +1,144 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder.tt;
+
+option java_package = "com.daysofwonder.game.pb";
+option java_outer_classname = "TTPBMapNamespace";
+option optimize_for = SPEED;
+
+message TTPBMapGlobal {
+  enum TicketString {
+    TOP = 1;
+    BOTTOM = 2;
+  }
+  message Board {
+    optional int32 x = 1;
+    optional int32 y = 2;
+    optional int32 width = 3;
+    optional int32 height = 4;
+  }
+  message Bonus {
+    optional string name = 1;
+    optional int32 score = 2;
+    optional string country = 3;
+  }
+  message CardStartSpecial {
+    optional string color = 1;
+    optional int32 quantity = 2;
+  }
+  repeated string language = 1;
+  optional string guid = 2;
+  optional .com.daysofwonder.tt.TTPBMapGlobal.Board largeboard = 3;
+  optional .com.daysofwonder.tt.TTPBMapGlobal.Board smallboard = 4;
+  optional .com.daysofwonder.tt.TTPBMapGlobal.Board medboard = 5;
+  optional int32 stations = 6;
+  optional int32 trains = 7 [default = 45];
+  optional int32 victory = 8 [default = 2];
+  optional bool ferry = 9;
+  optional bool tunnel = 10;
+  optional bool long_tickets = 11;
+  optional int32 ticketstart_long = 12;
+  optional int32 ticketstart_short = 13 [default = 3];
+  optional int32 ticketminstart = 14 [default = 2];
+  optional int32 ticketmin = 15 [default = 1];
+  optional bool recyclestarttickets = 16 [default = true];
+  optional bool recycletickets = 17 [default = true];
+  optional .com.daysofwonder.tt.TTPBMapGlobal.TicketString ticketstring = 18;
+  repeated .com.daysofwonder.tt.TTPBMapGlobal.Bonus bonus = 19;
+  optional int32 doubleroutes = 20 [default = 3];
+  optional int32 maxplayers = 21 [default = 5];
+  optional int32 locodiscard = 22 [default = 3];
+  optional int32 tunneldiscard = 23;
+  optional .com.daysofwonder.tt.TTPBMapDeck deck = 24;
+  optional bool country = 25;
+  optional bool lococard = 26;
+  optional bool tunnelcard = 27;
+  optional int32 version = 28;
+  optional int32 ticket = 29 [default = 3];
+  optional string trainCardImageNameSuffix = 30;
+  optional string backTrainCarCardName = 31;
+  optional string backTicketCardName = 32;
+  repeated int32 possibleLengthOfRoute = 33;
+  optional float wagonScale = 34;
+  optional int32 rulesEngineVersion = 35 [default = 0];
+  optional int32 cardstart = 36;
+  repeated .com.daysofwonder.tt.TTPBMapGlobal.CardStartSpecial cardstart_special = 37;
+}
+
+message TTPBMapDeck {
+  message Quantity {
+    optional string color = 1;
+    optional int32 quantity = 2;
+  }
+  optional int32 base = 1;
+  repeated .com.daysofwonder.tt.TTPBMapDeck.Quantity quantity = 2;
+}
+
+message TTPBMapCity {
+  optional string name = 1;
+  optional int32 x = 2;
+  optional int32 y = 3;
+  optional int32 lx = 4;
+  optional int32 ly = 5;
+  optional int32 mx = 6;
+  optional int32 my = 7;
+  optional bool is_country = 8;
+  optional string land = 9;
+  optional string display_name = 10;
+}
+
+message TTPBMapRoute {
+  message Position {
+    optional int32 centerx = 1;
+    optional int32 centery = 2;
+    optional int32 orientation = 3;
+  }
+  message Options {
+    message ForbiddenRoute {
+      optional string city1 = 1;
+      optional string city2 = 2;
+    }
+    optional bool tunnel = 1;
+    optional int32 ferry = 2;
+    repeated int32 mountain = 3;
+    optional bool ignore_other_route = 4;
+    repeated .com.daysofwonder.tt.TTPBMapRoute.Options.ForbiddenRoute forbidden_route = 5;
+  }
+  optional string city1 = 1;
+  optional string city2 = 2;
+  optional int32 nbr_train = 3;
+  optional string color = 4;
+  optional .com.daysofwonder.tt.TTPBMapRoute.Options options = 5;
+  repeated .com.daysofwonder.tt.TTPBMapRoute.Position position = 6;
+}
+
+message TTPBMapTrackPiece {
+  optional int32 nbr_train = 1;
+  optional string color = 2;
+}
+
+message TTPBMapTicket {
+  enum TicketType {
+    NORMAL = 1;
+    LONG = 2;
+  }
+  message Country {
+    optional string country = 1;
+    optional int32 score = 2;
+  }
+  optional string city1 = 1;
+  optional string city2 = 2;
+  optional int32 score = 3;
+  optional .com.daysofwonder.tt.TTPBMapTicket.TicketType type = 4;
+  repeated .com.daysofwonder.tt.TTPBMapTicket.Country country = 5;
+}
+
+message TTPBMap {
+  optional .com.daysofwonder.tt.TTPBMapGlobal global = 1;
+  repeated .com.daysofwonder.tt.TTPBMapCity city = 2;
+  repeated .com.daysofwonder.tt.TTPBMapRoute route = 3;
+  repeated .com.daysofwonder.tt.TTPBMapTicket ticket = 4;
+  repeated .com.daysofwonder.tt.TTPBMapTrackPiece trackpiece = 5;
+}
+

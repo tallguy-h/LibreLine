@@ -1,0 +1,48 @@
+// Recovered from embedded FileDescriptorProto in "Ticket to Ride.exe"
+syntax = "proto2";
+
+package com.daysofwonder.async;
+
+import "game.proto";
+
+option java_package = "com.daysofwonder.game.async.pb";
+option java_outer_classname = "PBAsyncCommon";
+option optimize_for = SPEED;
+
+message PlayerSession {
+  optional .com.daysofwonder.Player player = 1;
+  optional int64 session = 2;
+  optional .com.daysofwonder.async.ContactLists contacts = 3;
+}
+
+message PartnerToken {
+  optional string sessionToken = 3;
+  optional .com.daysofwonder.PartnerUser partner_user = 4;
+}
+
+message Credentials {
+  optional string name = 1;
+  optional string pass = 2;
+  optional .com.daysofwonder.async.PartnerToken partner_token = 3;
+}
+
+message Address {
+  optional string host = 1;
+  optional int32 port = 2;
+}
+
+message EmbeddedPayload {
+  required int32 serializerId = 1;
+  required bytes payload = 2;
+  optional bytes payloadManifest = 3;
+}
+
+message ContactList {
+  repeated int32 contact = 1;
+}
+
+message ContactLists {
+  optional .com.daysofwonder.async.ContactList buddies = 1;
+  optional .com.daysofwonder.async.ContactList ignores = 2;
+}
+
