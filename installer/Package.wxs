@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-2.0-only -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+     xmlns:fw="http://wixtoolset.org/schemas/v4/wxs/firewall">
+
+  <Package Name="Libre Line"
+           Manufacturer="Libre Line contributors"
+           Version="$(ProductVersion)"
+           UpgradeCode="F677F7A4-96C2-41C6-9A73-8401A99B9A43"
+           Scope="perMachine">
+
+    <SummaryInformation Description="Libre Line: a community server compatible with Ticket to Ride Classic" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Libre Line is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="LibreLine.ico" SourceFile="..\src\LibreLine.Desktop\LibreLine.ico" />
+    <Property Id="ARPPRODUCTICON" Value="LibreLine.ico" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Libre Line" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="Main" Title="Libre Line">
+      <Component Id="LibreLineApp" Directory="INSTALLFOLDER">
+        <File Id="LibreLineExe" Source="$(DesktopPublishDir)LibreLine.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="Libre Line"
+                    Description="Run a Libre Line server for Ticket to Ride Classic"
+                    WorkingDirectory="INSTALLFOLDER" Icon="LibreLine.ico" Advertise="yes" />
+          <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="Libre Line"
+                    Description="Run a Libre Line server for Ticket to Ride Classic"
+                    WorkingDirectory="INSTALLFOLDER" Icon="LibreLine.ico" Advertise="yes" />
+          <!-- Lets players on the network and over the internet reach the server, whatever port it uses. -->
+          <fw:FirewallException Id="LibreLineFirewall" Name="Libre Line"
+                                Description="Lets other players connect to the Libre Line server"
+                                Scope="any" Profile="all" />
+        </File>
+      </Component>
+    </Feature>
+
+    <ui:WixUI Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+    <!-- "Start Libre Line" on the last page. -->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Start Libre Line" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WixShellExecTarget" Value="[#LibreLineExe]" />
+    <CustomAction Id="LaunchApplication" DllEntry="WixShellExec" Impersonate="yes" BinaryRef="Wix4UtilCA_X64" />
+    <UI>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication"
+               Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed" />
+    </UI>
+  </Package>
+</Wix>

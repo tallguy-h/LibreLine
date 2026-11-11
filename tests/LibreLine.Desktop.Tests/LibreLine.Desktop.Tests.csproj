@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>$(LibreLineTargetFramework)-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\LibreLine.Desktop\LibreLine.Desktop.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,32 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+
+  <!--
+    The Windows installer (MSI) for the desktop app. Build it on Windows with:
+
+      dotnet build installer/LibreLine.Installer.wixproj -c Release
+
+    It publishes LibreLine.Desktop as one self-contained exe (no .NET install needed) and packages it. The MSI lands
+    in installer/bin/Release/. Pass -p:ProductVersion=x.y.z to set the version.
+  -->
+
+  <PropertyGroup>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">0.1.0</ProductVersion>
+    <OutputName>LibreLine-$(ProductVersion)-win-x64</OutputName>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <DesktopProject>$(MSBuildThisFileDirectory)..\src\LibreLine.Desktop\LibreLine.Desktop.csproj</DesktopProject>
+    <DesktopPublishDir Condition="'$(DesktopPublishDir)' == ''">$(MSBuildThisFileDirectory)obj\$(Configuration)\desktop\</DesktopPublishDir>
+    <DefineConstants>ProductVersion=$(ProductVersion);DesktopPublishDir=$(DesktopPublishDir)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Firewall.wixext" />
+    <PackageReference Include="WixToolset.UI.wixext" />
+    <PackageReference Include="WixToolset.Util.wixext" />
+  </ItemGroup>
+
+  <!-- Publish the desktop app first. Set SkipDesktopPublish=true to package an exe published some other way. -->
+  <Target Name="PublishDesktop" BeforeTargets="BeforeBuild" Condition="'$(SkipDesktopPublish)' != 'true'">
+    <Exec Command="dotnet publish &quot;$(DesktopProject)&quot; --configuration $(Configuration) --runtime win-x64 --self-contained --output &quot;$(DesktopPublishDir.TrimEnd('\'))&quot; -p:Version=$(ProductVersion) -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=none" />
+  </Target>
+
+</Project>

@@ -1,0 +1,21 @@
+<Solution>
+  <!--
+    The Windows desktop app and the server projects it uses. Kept apart from LibreLine.slnx so the Docker and Linux
+    builds don't change. The MSI is built separately: installer/build.ps1.
+  -->
+  <Folder Name="/src/">
+    <Project Path="src/Asmodee.Api/Asmodee.Api.csproj" />
+    <Project Path="src/LibreLine.Desktop/LibreLine.Desktop.csproj" />
+    <Project Path="src/LibreLine.Games/LibreLine.Games.csproj" />
+    <Project Path="src/LibreLine.Host/LibreLine.Host.csproj" />
+    <Project Path="src/LibreLine.Lobby/LibreLine.Lobby.csproj" />
+    <Project Path="src/LibreLine.Players/LibreLine.Players.csproj" />
+    <Project Path="src/LibreLine.Protocol/LibreLine.Protocol.csproj" />
+    <Project Path="src/LibreLine.Rules/LibreLine.Rules.csproj" />
+    <Project Path="src/LibreLine.Sessions/LibreLine.Sessions.csproj" />
+    <Project Path="src/LibreLine.Storage.Json/LibreLine.Storage.Json.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LibreLine.Desktop.Tests/LibreLine.Desktop.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The Windows desktop server: the same server as LibreLine.Host, in a window, with UPnP and a button that points the
+    local game at it. Windows only, so it lives in LibreLine.Windows.slnx and not in LibreLine.slnx (which Docker and
+    the Linux CI build).
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>$(LibreLineTargetFramework)-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationIcon>LibreLine.ico</ApplicationIcon>
+    <RootNamespace>LibreLine.Desktop</RootNamespace>
+    <AssemblyName>LibreLine</AssemblyName>
+    <Product>Libre Line</Product>
+    <Version>0.1.0</Version>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <!-- LibreLine.Host is an executable; the desktop app reuses its composition root and publishes self-contained. -->
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LibreLine.Host\LibreLine.Host.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="LibreLine.ico" LogicalName="LibreLine.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="LibreLine.Desktop.Tests" />
+  </ItemGroup>
+
+</Project>

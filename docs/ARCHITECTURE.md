@@ -135,6 +135,40 @@ docker run -d --name libreline -p 2445:2445 -v libreline-data:/data libreline
 A `docker-compose.yml` with the same settings goes beside the `Dockerfile`. A GitHub Actions workflow builds and
 tests on every push (including the Docker build).
 
+## Windows desktop app
+
+`LibreLine.Desktop` (Windows Forms, `net10.0-windows`) runs the same server in a window, for people who don't want a
+console or Docker. It calls `ServerHost.Build` from `LibreLine.Host`, so the server inside is the same one, with:
+
+- the port and data directory set from the window (data in `%LOCALAPPDATA%\Libre Line\data`);
+- a logger that writes to the window, and an `ISessionListener` that lists who is online.
+
+Around the server it adds:
+
+| Part | What it does |
+|---|---|
+| `Network/UpnpClient` | finds the router with SSDP, then calls its `WANIPConnection` or `WANPPPConnection` service: `GetExternalIPAddress`, `AddPortMapping`, `DeletePortMapping` |
+| `Network/RouterPort` | forwards the server's TCP port with a one-hour lease, renewed every half hour and removed when the server stops; if the router only takes permanent leases (error 725) it uses one; it reports a mapping held by another device (error 718) and an external address that is itself private (double NAT, CGNAT) |
+| `Network/NetworkAddresses` | this PC's local addresses, the one with the default route first; the public address from the router, or from `api.ipify.org` if the router won't say |
+| `Game/GameSettings` | sets or removes `customAsyncServerName` in the local game's `UserDefault.xml` |
+
+The game's `UserDefault.xml` starts with `<?1.0?>`, which isn't well-formed XML, so the file is edited as text: the
+setting goes straight after `<userDefaultRoot>` with the file's own line ends and indent, and nothing else changes.
+The app refuses while `Ticket to Ride.exe` is running. It keeps a copy of the file as first found, and remembers
+the value it replaced so that *Undo* restores it.
+
+The desktop app, its tests and the projects it uses are in `LibreLine.Windows.slnx`. `LibreLine.slnx`, the Docker
+image and the Linux CI job don't include it.
+
+The installer is `installer/LibreLine.Installer.wixproj` (WiX Toolset 6). Building it publishes the app as one
+self-contained `LibreLine.exe` (no .NET needed on the player's PC) and packages it as a per-machine MSI with:
+
+- Start menu and desktop shortcuts;
+- a Windows Firewall exception for the program;
+- an option to start the app when setup finishes.
+
+The CI workflow's Windows job runs the desktop tests and uploads the MSI.
+
 ## Testing
 
 - **Unit tests for observed behaviour.** Each assembly is unit-tested against the behaviour documented in these docs.

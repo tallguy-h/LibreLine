@@ -18,16 +18,23 @@ internal sealed class GameTicker(GameService games, ServerLock serverLock, TimeP
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1), time);
-        while (await timer.WaitForNextTickAsync(stoppingToken))
+        try
         {
-            try
+            while (await timer.WaitForNextTickAsync(stoppingToken))
             {
-                await serverLock.RunAsync(games.Tick);
+                try
+                {
+                    await serverLock.RunAsync(games.Tick);
+                }
+                catch (Exception e) when (e is not OperationCanceledException)
+                {
+                    logger.LogError(e, "Game tick failed");
+                }
             }
-            catch (Exception e) when (e is not OperationCanceledException)
-            {
-                logger.LogError(e, "Game tick failed");
-            }
+        }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
+            // Shutting down.
         }
     }
 }
